@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36109.1 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ois.Plus.DataTransform", "Ois.Plus.DataTransform\Ois.Plus.DataTransform.csproj", "{0384401C-7900-4791-8E12-3BF56C5DE46D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ois.Plus.ObjectModel", "Ois.Plus.ObjectModel\Ois.Plus.ObjectModel.csproj", "{09F43641-6460-0901-8211-F2AAB33A9646}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0384401C-7900-4791-8E12-3BF56C5DE46D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0384401C-7900-4791-8E12-3BF56C5DE46D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0384401C-7900-4791-8E12-3BF56C5DE46D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0384401C-7900-4791-8E12-3BF56C5DE46D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09F43641-6460-0901-8211-F2AAB33A9646}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09F43641-6460-0901-8211-F2AAB33A9646}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09F43641-6460-0901-8211-F2AAB33A9646}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09F43641-6460-0901-8211-F2AAB33A9646}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E107B531-7AFF-4777-A760-AFC36AFF4150}
+	EndGlobalSection
+EndGlobal
