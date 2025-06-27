@@ -33,8 +33,17 @@ internal class Program
             var dict = new Dictionary<string, string>();
             dict["id"] = obj.ID.ToString();
             dict["name"] = obj.name;
-            dict[obj.Items[2].Items[0].cName] = obj.Items[2].Items[0].dv;
-            dict[obj.Items[3].Items[0].cName] = obj.Items[3].Items[0].dv;
+            
+            foreach(var obj2 in obj.Items)
+            {
+                if(obj2 != null)
+                {
+                    foreach (var obj3 in obj2.Items)
+                    {
+                        dict[obj3.cName] = obj3.dv;
+                    }
+                }
+            }
 
             resultList.Add(dict);
         }
