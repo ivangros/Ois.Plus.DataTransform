@@ -33,17 +33,18 @@ internal class Program
             var dict = new Dictionary<string, string>();
             dict["id"] = obj.ID.ToString();
             dict["name"] = obj.name;
-            
-            foreach(var obj2 in obj.Items)
-            {
-                if(obj2 != null)
-                {
-                    foreach (var obj3 in obj2.Items)
-                    {
-                        dict[obj3.cName] = obj3.dv;
-                    }
-                }
-            }
+
+            ProcessAllItems(obj.Items, dict);
+            //foreach(var obj2 in obj.Items)
+            //{
+            //    if(obj2 != null)
+            //    {
+            //        foreach (var obj3 in obj2.Items)
+            //        {
+            //            dict[obj3.cName] = obj3.dv;
+            //        }
+            //    }
+            //}
 
             resultList.Add(dict);
         }
@@ -65,6 +66,25 @@ internal class Program
             }]";
 
         return jsonResult;*/
+    }
+
+    public static void ProcessAllItems(IEnumerable<Item> items, Dictionary<string, string> dict)
+    {
+        foreach(var item in items)
+        {
+            if (item != null)
+            {
+                if (!string.IsNullOrEmpty(item.cName))
+                {
+                    dict[item.cName] = item.dv;
+                }
+            }
+
+            if(item.Items != null)
+            {
+                ProcessAllItems(item.Items, dict);
+            }
+        }
     }
 
     
