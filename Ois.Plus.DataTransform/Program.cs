@@ -33,8 +33,8 @@ internal class Program
             var dict = new Dictionary<string, string>();
             dict["id"] = obj.ID.ToString();
             dict["name"] = obj.name;
-            dict["pty_watering_vol_man_source"] = obj.Items[2].Items[0].dv;
-            dict["pty_flrate_vol_liquid_man_source"] = obj.Items[3].Items[0].dv;
+            dict[obj.Items[2].Items[0].cName] = obj.Items[2].Items[0].dv;
+            dict[obj.Items[3].Items[0].cName] = obj.Items[3].Items[0].dv;
 
             resultList.Add(dict);
         }
