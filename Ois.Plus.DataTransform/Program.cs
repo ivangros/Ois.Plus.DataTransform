@@ -31,20 +31,7 @@ internal class Program
         foreach (var obj in qr.Objects.Items)
         {
             var dict = new Dictionary<string, string>();
-            dict["id"] = obj.ID.ToString();
-            dict["name"] = obj.name;
-
             ProcessAllItems(obj.Items, dict);
-            //foreach(var obj2 in obj.Items)
-            //{
-            //    if(obj2 != null)
-            //    {
-            //        foreach (var obj3 in obj2.Items)
-            //        {
-            //            dict[obj3.cName] = obj3.dv;
-            //        }
-            //    }
-            //}
 
             resultList.Add(dict);
         }
@@ -70,17 +57,22 @@ internal class Program
 
     public static void ProcessAllItems(IEnumerable<Item> items, Dictionary<string, string> dict)
     {
-        foreach(var item in items)
+        
+        foreach (var item in items)
         {
             if (item != null)
             {
-                if (!string.IsNullOrEmpty(item.cName))
+                if (!string.IsNullOrEmpty(item.pName) && !string.IsNullOrEmpty(item.dv))
+                {
+                    dict[item.pName] = item.dv;
+                }
+                else if (!string.IsNullOrEmpty(item.cName) && !string.IsNullOrEmpty(item.dv))
                 {
                     dict[item.cName] = item.dv;
                 }
             }
 
-            if(item.Items != null)
+            if (item.Items != null)
             {
                 ProcessAllItems(item.Items, dict);
             }
