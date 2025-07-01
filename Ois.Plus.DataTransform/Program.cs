@@ -18,7 +18,7 @@ public class Program
 
     public static string ToJsonQuery()
     {
-        var q = (Query)InteractionObject.LoadFromXml(queryResult2);
+        var q = (QueryResult)InteractionObject.LoadFromXml(queryResult2);
         var settings = new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore };
         //todo: необходимо описать атрибуты сериализации на Query и всех классах для корректной сериализации,
         //чтобы результат был идентичен jsonQuery
@@ -68,9 +68,19 @@ public class Program
         {
             if (item == null) continue;
 
-            var currentKey = string.IsNullOrEmpty(parentKey)
-                ? item.pName
-                : $"{parentKey}__{item.pName}";
+            string currentKey;
+            if (string.IsNullOrEmpty(parentKey))
+            {
+                currentKey = item.pName ?? "";
+            }
+            else if (!string.IsNullOrEmpty(item.pName))
+            {
+                currentKey = $"{parentKey}_{item.pName}";
+            }
+            else
+            {
+                currentKey = parentKey; // не добавляем "_"
+            }
 
             if (!string.IsNullOrEmpty(item.dv))
             {
@@ -80,11 +90,6 @@ public class Program
             if (item.Items != null)
             {
                 ProcessAllItems(item.Items, dict, currentKey);
-            }
-
-            if (item.cName == "ref_value_condition" && !string.IsNullOrEmpty(item.name))
-            {
-                dict[$"{currentKey}__name"] = item.name;
             }
         }
     }
@@ -221,7 +226,7 @@ public class XMLConv
 
     public static string ToJsonQuery(string queryResult)
     {
-        var q = (Query)InteractionObject.LoadFromXml(queryResult);
+        var q = (QueryResult)InteractionObject.LoadFromXml(queryResult);
         var settings = new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore };
         //todo: необходимо описать атрибуты сериализации на Query и всех классах для корректной сериализации,
         //чтобы результат был идентичен jsonQuery
