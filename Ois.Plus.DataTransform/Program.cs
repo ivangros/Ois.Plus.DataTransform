@@ -79,7 +79,7 @@ public class Program
             }
             else
             {
-                currentKey = parentKey; // не добавляем "_"
+                currentKey = parentKey;
             }
 
             if (!string.IsNullOrEmpty(item.dv))
