@@ -93,7 +93,8 @@ public class Program
         }
     }
 
-    public static void ProcessWithTime(IEnumerable<Item> items, Dictionary<string, List<Dictionary<string, string>>> result, Dictionary<string, string> collectedInfo, string parentKey = "")
+
+    public static void ProcessWithTime(IEnumerable<Item> items, Dictionary<string, List<Dictionary<string, string>>> result, Dictionary<string, string> collectedInfo,string parentKey = "")
     {
         foreach (var item in items)
         {
@@ -105,30 +106,37 @@ public class Program
 
             if (!string.IsNullOrEmpty(item.sTime))
             {
-                var row = new Dictionary<string, string>(collectedInfo);
+                Dictionary<string, string> row = null;
+
+                if (result.ContainsKey(item.sTime))
+                {
+                    row = result[item.sTime]
+                        .FirstOrDefault(row =>collectedInfo.All(el => row.ContainsKey(el.Key) && row[el.Key] == el.Value));
+                }
+                else
+                {
+                    result[item.sTime] = new List<Dictionary<string, string>>();
+                }
+
+                if (row == null)
+                {
+                    row = new Dictionary<string, string>(collectedInfo);
+                    result[item.sTime].Add(row);
+                }
 
                 if (!string.IsNullOrEmpty(item.dv))
                     row[currentKey] = item.dv;
 
                 if (item.Items != null)
                     ProcessAllItems(item.Items, row, currentKey);
-
-                if (!result.ContainsKey(item.sTime))
-                    result[item.sTime] = new List<Dictionary<string, string>>();
-
-                result[item.sTime].Add(row);
             }
             else
             {
                 if (!string.IsNullOrEmpty(item.dv))
-                {
                     collectedInfo[currentKey] = item.dv;
-                }
 
                 if (item.Items != null)
-                {
                     ProcessWithTime(item.Items, result, collectedInfo, currentKey);
-                }
             }
         }
     }
