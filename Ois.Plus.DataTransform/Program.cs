@@ -47,17 +47,18 @@ public class Program
         return resultList;
     }
 
-    public static Dictionary<string, List<Dictionary<string, string>>> QueryData(string jsonQuery, bool groupBySTime = true)
+    public static List<Dictionary<string, string>> QueryData(string jsonQuery, bool groupBySTime = true)
     {
         var qr = (QueryResult)InteractionObject.LoadFromXml(queryResult3);
-        var resultDict = new Dictionary<string, List<Dictionary<string, string>>>();
+        var resultDict = new Dictionary<string, Dictionary<string, string>>();
 
         foreach (var obj in qr.Objects.Items)
         {
-            ProcessWithTime(obj.Items, resultDict, new Dictionary<string, string>());
+            var baseInfo = new Dictionary<string, string>();
+            ProcessWithTime(obj.Items, resultDict, baseInfo);
         }
 
-        return resultDict;
+        return resultDict.Values.ToList();
     }
 
 
@@ -93,8 +94,7 @@ public class Program
         }
     }
 
-
-    public static void ProcessWithTime(IEnumerable<Item> items, Dictionary<string, List<Dictionary<string, string>>> result, Dictionary<string, string> collectedInfo,string parentKey = "")
+    public static void ProcessWithTime(IEnumerable<Item> items,Dictionary<string, Dictionary<string, string>> groupedData,Dictionary<string, string> baseInfo,string parentKey = "")
     {
         foreach (var item in items)
         {
@@ -106,40 +106,36 @@ public class Program
 
             if (!string.IsNullOrEmpty(item.sTime))
             {
-                Dictionary<string, string> row = null;
+                var keyParts = baseInfo.OrderBy(el => el.Key)
+                                       .Select(el => $"{el.Key}={el.Value}")
+                                       .Append($"sTime={item.sTime}");
+                string sortKey = string.Join("|", keyParts);
 
-                if (result.ContainsKey(item.sTime))
+                if (!groupedData.ContainsKey(sortKey))
                 {
-                    row = result[item.sTime]
-                        .FirstOrDefault(row =>collectedInfo.All(el => row.ContainsKey(el.Key) && row[el.Key] == el.Value));
-                }
-                else
-                {
-                    result[item.sTime] = new List<Dictionary<string, string>>();
-                }
-
-                if (row == null)
-                {
-                    row = new Dictionary<string, string>(collectedInfo);
-                    result[item.sTime].Add(row);
+                    groupedData[sortKey] = new Dictionary<string, string>(baseInfo)
+                    {
+                        ["sTime"] = item.sTime
+                    };
                 }
 
                 if (!string.IsNullOrEmpty(item.dv))
-                    row[currentKey] = item.dv;
+                    groupedData[sortKey][currentKey] = item.dv;
 
                 if (item.Items != null)
-                    ProcessAllItems(item.Items, row, currentKey);
+                    ProcessAllItems(item.Items, groupedData[sortKey], currentKey);
             }
             else
             {
                 if (!string.IsNullOrEmpty(item.dv))
-                    collectedInfo[currentKey] = item.dv;
+                    baseInfo[currentKey] = item.dv;
 
                 if (item.Items != null)
-                    ProcessWithTime(item.Items, result, collectedInfo, currentKey);
+                    ProcessWithTime(item.Items, groupedData, baseInfo, currentKey);
             }
         }
     }
+
 
 
     //запрос
