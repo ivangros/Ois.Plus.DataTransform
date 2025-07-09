@@ -50,15 +50,15 @@ public class Program
     public static List<Dictionary<string, string>> QueryData(string jsonQuery, bool groupBySTime = true)
     {
         var qr = (QueryResult)InteractionObject.LoadFromXml(queryResult3);
-        var resultDict = new Dictionary<string, Dictionary<string, string>>();
+        var resultList = new List<Dictionary<string, string>>();
 
         foreach (var obj in qr.Objects.Items)
         {
             var baseInfo = new Dictionary<string, string>();
-            ProcessWithTime(obj.Items, resultDict, baseInfo);
+            ProcessWithTime(obj.Items, resultList, baseInfo);
         }
 
-        return resultDict.Values.ToList();
+        return resultList;
     }
 
 
@@ -94,7 +94,8 @@ public class Program
         }
     }
 
-    public static void ProcessWithTime(IEnumerable<Item> items,Dictionary<string, Dictionary<string, string>> groupedData,Dictionary<string, string> baseInfo,string parentKey = "")
+    
+    public static void ProcessWithTime(IEnumerable<Item> items,List<Dictionary<string, string>> resultList,Dictionary<string, string> baseInfo,string parentKey = "")
     {
         foreach (var item in items)
         {
@@ -106,24 +107,31 @@ public class Program
 
             if (!string.IsNullOrEmpty(item.sTime))
             {
-                var keyParts = baseInfo.OrderBy(el => el.Key)
-                                       .Select(el => $"{el.Key}={el.Value}")
-                                       .Append($"sTime={item.sTime}");
-                string sortKey = string.Join("|", keyParts);
-
-                if (!groupedData.ContainsKey(sortKey))
+                var row = new Dictionary<string, string>(baseInfo)
                 {
-                    groupedData[sortKey] = new Dictionary<string, string>(baseInfo)
-                    {
-                        ["sTime"] = item.sTime
-                    };
-                }
+                    ["sTime"] = item.sTime
+                };
 
                 if (!string.IsNullOrEmpty(item.dv))
-                    groupedData[sortKey][currentKey] = item.dv;
+                    row[currentKey] = item.dv;
 
                 if (item.Items != null)
-                    ProcessAllItems(item.Items, groupedData[sortKey], currentKey);
+                    ProcessAllItems(item.Items, row, currentKey);
+
+                var existing = resultList.FirstOrDefault(existingRow =>
+                    existingRow.TryGetValue("sTime", out var existingSTime) &&
+                    existingSTime == item.sTime &&
+                    baseInfo.All(el => existingRow.ContainsKey(el.Key) && existingRow[el.Key] == el.Value));
+
+                if (existing != null)
+                {
+                    foreach (var el in row)
+                        existing[el.Key] = el.Value;
+                }
+                else
+                {
+                    resultList.Add(row);
+                }
             }
             else
             {
@@ -131,7 +139,7 @@ public class Program
                     baseInfo[currentKey] = item.dv;
 
                 if (item.Items != null)
-                    ProcessWithTime(item.Items, groupedData, baseInfo, currentKey);
+                    ProcessWithTime(item.Items, resultList, baseInfo, currentKey);
             }
         }
     }
